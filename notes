@@ -1,0 +1,517 @@
+npx create-react-app <project-name>
+npm start //Runs project
+JSX => JavaScript XML
+
+React is a javascript library to build user interfaces.
+React makes building complex, interactive and reactive users interfaces simpler.
+React is all about component.
+All user interfaces in react in the end are made up of components.
+
+Why components?:
+	Reusability - Don't repeat yourself.
+	Separations of concerns - Don't do too many things in one and same place.
+	
+
+In react we build our own custom HTML Elements called Components.
+---------------------------------------------------------------------------------------------------------------------------------------------
+https://docs.google.com/document/d/1Ej25Q5rnDiUAPdSFmCKNLrrwD4KYUGGsn_IrmSFh_e8/edit?usp=sharing
+---------------------------------------------------------------------------------------------------------------------------------------------
+React State:
+---------------------------------------------------------------------------------------------------------------------------------------------
+useState:
+  Deals with variable value change.
+  With useState, we create special kind of variable.
+  It must be called directly inside the components.
+  On state changes, the corresponding react component is re-evaluated.
+  The special thing is that React keeps track of when we call useState in a given component instance for the first time.
+  
+const [title, setTitle] = useState(props.title);
+const changeTitleHandler = () => {
+  setTitle("Updated");	//Here value of title immediatly doesn't change, setTitle function schedules the update, and then later it is changed.
+  console.log(title);
+};
+  
+---------------------------------------------------------------------------------------------------------------------------------------------
+  //   const [enteredTitle, setEnteredTitle] = useState("");
+  //   const [enteredAmount, setEnteredAmount] = useState(0);
+  //   const [enteredDate, setEnteredDate] = useState("2021-01-01");
+  setEnteredTitle(event.target.value);
+  
+---------------------------------------------------------------------------------------------------------------------------------------------
+	  const [userInput, setUserInput] = useState({
+		enteredTitle: "",
+		entedAmount: 0,
+		enteredDate: "",
+	  });
+    // setUserInput({
+    //   ...userInput,
+    //   enteredTitle: event.target.value,
+    // });
+	
+    setUserInput((prevState) => {
+      return { ...prevState, enteredTitle: event.target.value };
+    }); //This gurantees, the variable will be updated simultaneously
+		//Used when state depends on previous state
+---------------------------------------------------------------------------------------------------------------------------------------------
+import { useState } from "react";
+
+import "./ExpenseForm.css";
+
+const ExpenseForm = () => {
+  const [enteredTitle, setEnteredTitle] = useState("");
+  const [enteredAmount, setEnteredAmount] = useState(0);
+  const [enteredDate, setEnteredDate] = useState("2021-01-01");
+  //   const [userInput, setUserInput] = useState({
+  //     enteredTitle: "",
+  //     entedAmount: 0,
+  //     enteredDate: "",
+  //   });
+
+  const titleChangeHandler = (event) => {
+    setEnteredTitle(event.target.value);
+    // setUserInput({
+    //   ...userInput,
+    //   enteredTitle: event.target.value,
+    // });
+    // setUserInput((prevState) => {
+    //   return { ...prevState, enteredTitle: event.target.value };
+    // }); //This gurantees, the variable will be updated simultaneously
+  };
+
+  const amountChangeHandler = (event) => {
+    setEnteredAmount(event.target.value);
+    // setUserInput({
+    //   ...userInput,
+    //   enteredAmount: event.target.value,
+    // });
+  };
+
+  const dateChangeHandler = (event) => {
+    setEnteredDate(event.target.value);
+    // setUserInput({
+    //   ...userInput,
+    //   enteredTitle: event.target.value,
+    // });
+  };
+
+  const submitHandler = (event) => {
+    event.preventDefault();
+    const expenseData = {
+      title: enteredTitle,
+      amount: enteredAmount,
+      date: new Date(enteredDate),
+    };
+    console.log(expenseData);
+    setEnteredTitle("");
+    setEnteredAmount(0);
+    setEnteredDate("");
+  };
+
+  return (
+    <form onSubmit={submitHandler}>
+      <div className="new-expense__controls">
+        <div className="new-expense__control">
+          <label>Title</label>
+          <input
+            type="text"
+            value={enteredTitle}
+            onChange={titleChangeHandler}
+          />
+        </div>
+        <div className="new-expense__control">
+          <label>Amount</label>
+          <input
+            type="number"
+            min="0.01"
+            step="0.01"
+            value={enteredAmount}
+            onChange={amountChangeHandler}
+          />
+        </div>
+        <div className="new-expense__control">
+          <label>Date</label>
+          <input
+            type="date"
+            min="2021-01-01"
+            max="2022-12-31"
+            value={enteredDate}
+            onChange={dateChangeHandler}
+          />
+        </div>
+      </div>
+      <div className="new-expense__actions">
+        <button type="submit">Add Expense</button>
+      </div>
+    </form>
+  );
+};
+
+export default ExpenseForm;
+---------------------------------------------------------------------------------------------------------------------------------------------
+//App.js
+
+import "./App.css";
+import Expenses from "./components/Expenses/Expenses";
+import NewExpense from "./components/NewExpense/NewExpense";
+
+const App = () => {
+  const expenses = [
+    { title: "Car Issuarance", amount: 293.99, date: new Date(2021, 2, 23) },
+    { title: "Toilet Paper", amount: 40, date: new Date(2021, 2, 24) },
+    { title: "Biscuits", amount: 100, date: new Date(2021, 2, 23) },
+    { title: "Grocery", amount: 300, date: new Date(2021, 2, 23) },
+  ];
+
+  const addExpenseHandler = (expense) => {
+    console.log("App.js");
+    console.log(expense);
+  };
+  return (
+    <div>
+      <NewExpense onAddExpense={addExpenseHandler} />
+      <Expenses expenses={expenses} />
+    </div>
+  );
+};
+
+export default App;
+
+//NewExpense.js
+
+import "./NewExpense.css";
+import ExpenseForm from "./ExpenseForm";
+
+const NewExpense = (props) => {
+  const saveExpenseDataHandler = (enteredExpenseData) => {
+    const expenseData = {
+      ...enteredExpenseData,
+      id: Math.random().toString(),
+    };
+    console.log("From new expense");
+    console.log(expenseData);
+    props.onAddExpense(expenseData);
+  };
+  return (
+    <div className="new-expense">
+      <ExpenseForm onSaveExpenseData={saveExpenseDataHandler} />
+    </div>
+  );
+};
+
+export default NewExpense;
+---------------------------------------------------------------------------------------------------------------------------------------------
+controlled vs uncontrolled
+Stateless vs Statefull
+---------------------------------------------------------------------------------------------------------------------------------------------
+When mapping list of items, always add key.
+---------------------------------------------------------------------------------------------------------------------------------------------
+import { useState } from "react";
+
+import "./Expenses.css";
+import ExpenseItem from "./ExpenseItem";
+import Card from "../UI/Card";
+import ExpensesFilter from "./ExpensesFilter";
+
+const Expenses = (props) => {
+  // const expenses = props.expenses;
+  const [yearFilter, setYearFilter] = useState("All");
+  const [filteredExpenses, setFilterExpenses] = useState(props.expenses);
+
+  const onFilterSelectionHandler = (filterValue) => {
+    setYearFilter(filterValue);
+    if (filterValue === "All") {
+      setFilterExpenses(props.expenses);
+      return;
+    }
+    let tempExpenses = props.expenses.filter((expense) => {
+      return expense.date.getFullYear().toString() === filterValue;
+    });
+    setFilterExpenses(tempExpenses);
+  };
+
+  let expensesContent = <p className="text-color">No Expenses found.</p>;
+  if (filteredExpenses.length > 0) {
+    expensesContent =
+      filteredExpenses.length > 0 &&
+      filteredExpenses.map((expense) => (
+        <ExpenseItem
+          key={expense.id}
+          title={expense.title}
+          amount={expense.amount}
+          date={expense.date}
+        />
+      ));
+  }
+
+  return (
+    <div>
+      <Card className="expenses">
+        <ExpensesFilter
+          selected={yearFilter}
+          onFilterSelection={onFilterSelectionHandler}
+        />
+        {expensesContent}
+        {/*Commented values
+			{filteredExpenses.length === 0 && (
+			  <p className="text-color">No Expenses found.</p>
+			)}
+			{filteredExpenses.length > 0 &&
+			  filteredExpenses.map((expense) => (
+				<ExpenseItem
+				  key={expense.id}
+				  title={expense.title}
+				  amount={expense.amount}
+				  date={expense.date}
+				/>
+			  ))} 
+		  */}
+      </Card>
+    </div>
+  );
+};
+
+export default Expenses;
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+//CSS Styles
+<form onSubmit={formSubmitHandler}>
+      <div className={`form-control ${!isValid ? "invalid" : ""}`}>  //Attaches invalid class dynamically
+        <label>Course Goal</label>
+        <input type="text" onChange={goalInputChangeHandler} />
+      </div>
+      <Button type="submit">Add Goal</Button>
+    </form>
+---------------------------------------------------------------------------------------------------------------------------------------------
+https://styled-components.com/	
+Style components is a package that helps you build guess what, components which have certain styles attached to them where the styles really 
+only affect the components to which they were attached and not any other components.
+---------------------------------------------------------------------------------------------------------------------------------------------
+import styled from "styled-components";
+
+// import './Button.css';
+
+//Tagged template literal
+const Button = styled.button`
+  width: 100%;
+  font: inherit;
+  padding: 0.5rem 1.5rem;
+  border: 1px solid #8b005d;
+  color: white;
+  background: #8b005d;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.26);
+  cursor: pointer;
+
+  @media (min-width: 768px) {
+    width: auto;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:hover,
+  &:active {
+    background: #ac0e77;
+    border-color: #ac0e77;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.26);
+  }
+`;
+
+// const Button = props => {
+//   return (
+//     <button type={props.type} className="button" onClick={props.onClick}>
+//       {props.children}
+//     </button>
+//   );
+// };
+
+export default Button;
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+By default css class are global in react. To make it specific, CSS modules are created
+//CSS Modules
+React project created with create-react-app supports CSS modules
+//Css file name changed to Button.module.css
+//Import style changed
+
+import React from "react";
+import styles from "./Button.module.css";
+
+const Button = (props) => {
+  return (
+    <button type={props.type} className={styles.button} onClick={props.onClick}>
+      {props.children}
+    </button>
+  );
+};
+
+export default Button;
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+import React, { useState } from "react";
+
+import Button from "../../UI/Button/Button-styled-components";
+import styles from "./CourseInput.module.css";
+
+const CourseInput = (props) => {
+  const [enteredValue, setEnteredValue] = useState("");
+
+  const [isValid, setIsValid] = useState(true);
+
+  const goalInputChangeHandler = (event) => {
+    if (event.target.value.trim().length > 0) {
+      setIsValid(true);
+    }
+    setEnteredValue(event.target.value);
+  };
+
+  const formSubmitHandler = (event) => {
+    event.preventDefault();
+    if (enteredValue.trim().length === 0) {
+      setIsValid(false);
+      return;
+    }
+    props.onAddGoal(enteredValue);
+  };
+
+  return (
+    <form onSubmit={formSubmitHandler}>
+      <div
+        className={`${styles["form-control"]} ${!isValid && styles.invalid}`}
+      >
+        <label>Course Goal</label>
+        <input type="text" onChange={goalInputChangeHandler} />
+      </div>
+      <Button type="submit">Add Goal</Button>
+    </form>
+  );
+};
+
+export default CourseInput;
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+Component execution lifecycle
+constructor => render => componentDidMount
+//Parent componentDidMount is called after the child componentDidMount
+---------------------------------------------------------------------------------------------------------------------------------------------
+https://felixgerschau.com/react-rerender-components/
+---------------------------------------------------------------------------------------------------------------------------------------------
+https://dev.to/ruppysuppy/doms-decoded-dom-shadow-dom-virtual-dom-28c
+---------------------------------------------------------------------------------------------------------------------------------------------
+DOM is an API for HTML or XML documents and it creates a logical structure which can be accessed and manipulated.
+Web browsers create the DOM by parsing the HTML document, so we can interact with it using JavaScript and select & style elements with CSS.
+---------------------------------------------------------------------------------------------------------------------------------------------
+A virtual DOM is a lightweight JavaScript representation of the DOM used in declarative web frameworks such as React, Vue.js, and Elm.
+
+DOM operations might be really powerful, it comes at a huge cost. It's one of the slowest operations in the world of web dev. 
+To reduce the number of DOM operations, we use the Virtual DOM to modify the DOM if it really requires any modification and not every time something changes.
+---------------------------------------------------------------------------------------------------------------------------------------------
+//notistack - Snackbar codes
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+React Router
+const App = ({ user }) =>
+  <Router basename="learning"> //Other attributes: forceRefresh
+    <Route
+      exact path='/'
+      render={() => <Home user={user} />}
+    />
+    <Route path='/articles' component={Article} />
+    <Route path='/about' component={About} />
+  </Router>\
+  
+//
+getUserConfirmation={
+	(message,callback)=>{
+		callback(window.confirm())
+	}
+}
+
+useEffect(()=>{
+	window.scroll(0,0)
+},[])
+---------------------------------------------------------------------------------------------------------------------------------------------
+https://web.dev/storage-for-the-web/
+---------------------------------------------------------------------------------------------------------------------------------------------
+https://medium.com/@wilbo/server-side-vs-client-side-routing-71d710e9227f
+---------------------------------------------------------------------------------------------------------------------------------------------
+https://reactjs.org/docs/faq-state.html
+---------------------------------------------------------------------------------------------------------------------------------------------
+https://reactjs.org/docs/thinking-in-react.html
+https://blog.logrocket.com/why-you-should-render-react-on-the-server-side-a50507163b79/
+https://www.pluralsight.com/guides/styling-a-react-app-with-material-ui#module-creatingcharactercards
+https://mui.com/components/cards/
+https://www.pluralsight.com/guides/using-react-with-the-history-api
+https://javascript.plainenglish.io/creating-material-ui-themes-in-react-cc839c9ee683
+https://reactjs.org/docs/hooks-custom.html
+https://mui.com/customization/theming/
+https://linuxize.com/post/curl-post-request/
+https://webdevassist.com/reactjs-materialui/box-component
+https://github.com/axios/axios#handling-errors
+https://create-react-app.dev/docs/folder-structure/
+https://iamhosseindhv.com/notistack/demos#maximum-snackbars
+https://jscomplete.com/learn/react-beyond-basics/react-hooks-deep-dive
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
